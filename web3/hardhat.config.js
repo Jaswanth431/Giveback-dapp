@@ -1,5 +1,3 @@
-require("@nomicfoundation/hardhat-toolbox");
-require("@nomicfoundation/hardhat-chai-matchers");
 require("@nomiclabs/hardhat-ethers");
 require("dotenv").config();
 
@@ -21,7 +19,7 @@ module.exports = {
   networks: {
     hedera: {
       url: 'https://testnet.hashio.io/api',
-      accounts: ['Private key'],
+      accounts: [process.env.HEDERA_PRIVATE_KEY],
       chainId: 296,  // Hedera testnet chain ID
     },
   },

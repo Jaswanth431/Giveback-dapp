@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setWallet, resetWallet } from './store';
+import { setWallet, resetWallet, setWalletConnected } from './store';
 import walletConnectFcn from "./hedera/walletConnect";
 
 const useWallet = () => {
   const dispatch = useDispatch();
-   const { provider, signer, address } = useSelector((state) => state);
+  const { provider, signer, address } = useSelector((state) => state);
 
   const connectWallet = async () => {
     try {
@@ -13,8 +13,10 @@ const useWallet = () => {
       console.log(selectedAccount);
       const _signer = _provider.getSigner();
       dispatch(setWallet({ provider: _provider, signer: _signer, address: selectedAccount }));
+      dispatch(setWalletConnected(true));
     } catch (error) {
       console.error('Failed to connect wallet:', error);
+      dispatch(setWalletConnected(false));
     }
   };
 
@@ -23,8 +25,10 @@ const useWallet = () => {
       const _address = accounts[0];
       console.log(_address);
       dispatch(setWallet({ ...provider, address: _address }));
+      dispatch(setWalletConnected(true));
     } else {
       dispatch(resetWallet());
+      dispatch(setWalletConnected(false));
     }
   };
 
@@ -32,6 +36,7 @@ const useWallet = () => {
     console.log('Network changed to:', newNetwork);
     if(newNetwork!=296){
       dispatch(resetWallet());
+      dispatch(setWalletConnected(false));
     }
   };
 

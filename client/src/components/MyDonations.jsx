@@ -4,77 +4,157 @@ import axios from 'axios';
 import useWallet from '../usewallet';
 import APP_CONSTANTS from '../constants';
 import Spinner from '../assets/spinner.svg';
-import { toast, ToastContainer } from 'react-toastify'; 
+import { toast, ToastContainer } from 'react-toastify';
+import './MyDonations.css';
 
 const MyDonations = () => {
-  const [donations, setDonations] = useState([]); 
-  const [loading, setLoading] = useState(true);
-  const { address } = useWallet(); 
+  const [cryptoDonations, setCryptoDonations] = useState([]);
+  const [inrDonations, setInrDonations] = useState([]);
+  const [loadingCrypto, setLoadingCrypto] = useState(true);
+  const [loadingInr, setLoadingInr] = useState(true);
+  const { address } = useWallet();
 
-  const fetchDonations = async () => {
+  const fetchCryptoDonations = async () => {
     if (!address) {
-      toast.error('Wallet address not found. Please connect your wallet.'); 
-      setLoading(false); 
-      return; 
+      setLoadingCrypto(false);
+      return;
     }
 
     try {
-      setLoading(true); 
+      setLoadingCrypto(true);
       const response = await axios.post(`${APP_CONSTANTS.backendURL}/mydonations`, {
-        address, 
+        address,
       });
       console.log(response);
       if (response.data.success) {
-        setDonations(response.data.donations); 
-        console.log(response.data.donations);
+        setCryptoDonations(response.data.donations || []);
       } else {
-        toast.error('Failed to fetch donations.'); 
+        toast.error('Failed to fetch crypto donations.');
+        setCryptoDonations([]);
       }
     } catch (error) {
-      console.error('Error fetching donations:', error);
-      toast.error('Error fetching donations.'); 
+      console.error('Error fetching crypto donations:', error);
+      toast.error('Error fetching crypto donations.');
+      setCryptoDonations([]);
     } finally {
-      setLoading(false); 
+      setLoadingCrypto(false);
+    }
+  };
+
+  const fetchInrDonations = async () => {
+    try {
+      setLoadingInr(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setLoadingInr(false);
+        setInrDonations([]);
+        return;
+      }
+
+      const response = await axios.get(`${APP_CONSTANTS.backendURL}/api/donations/user/completed`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+  
+      setInrDonations(response.data.donations);
+    } catch (error) {
+      console.error('Error fetching INR donations:', error);
+      toast.error('Error fetching INR donations.');
+      setInrDonations([]);
+    } finally {
+      setLoadingInr(false);
     }
   };
 
   useEffect(() => {
-    fetchDonations();
+    fetchCryptoDonations();
+    fetchInrDonations();
   }, [address]);
 
-  if (loading) {
+  const renderCryptoDonations = () => {
+    if (!address) {
+      return <p className="no-donations">Please connect your wallet to view crypto donations</p>;
+    }
+
+    if (loadingCrypto) {
+      return (
+        <div className="spinner-container">
+          <img src={Spinner} alt="Loading..." className="spinner" />
+        </div>
+      );
+    }
+
+    if (cryptoDonations.length === 0) {
+      return <p className="no-donations">No crypto donations found.</p>;
+    }
+
     return (
-      <div className="spinner">
-        <img src={Spinner} alt="Loading..." />
+      <div className="donations-grid">
+        {cryptoDonations.map((donation, index) => (
+          <div key={index} className="donation-card">
+            <div className="donation-details">
+              <p className="donation-id">Campaign ID: {donation.campaignId}</p>
+              <p className="donation-amount">Amount: {donation.amount} HBAR</p>
+              <Link to={`/campaign-details/${donation.campaignId}`} className="view-campaign-link">
+                View Campaign
+              </Link>
+            </div>
+          </div>
+        ))}
       </div>
-    ); 
-  }
+    );
+  };
 
-  if (!address) {
-    return <p className='no-campaigns'>Please connect to wallet</p>; 
-  }
+  const renderInrDonations = () => {
+    if (loadingInr) {
+      return (
+        <div className="spinner-container">
+          <img src={Spinner} alt="Loading..." className="spinner" />
+        </div>
+      );
+    }
 
-  if (donations.length === 0) {
-    return <p className='no-campaigns'>No donations found.</p>; // Show message if no donations are found
-  }
+    if (inrDonations.length === 0) {
+      return <p className="no-donations">No INR donations found.</p>;
+    }
+
+    return (
+      <div className="donations-grid">
+        {inrDonations.map((donation, index) => (
+          <div key={index} className="donation-card">
+            <div className="donation-details">
+              <p className="donation-amount">₹{donation.amount}</p>
+              <p className="donation-date">
+                {new Date(donation.createdAt).toLocaleDateString()}
+              </p>
+              <p className={`donation-status status-${donation.status.toLowerCase()}`}>
+                {donation.status}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="my-donations-container">
       <h2 className="my-donations-heading">My Donations</h2>
-      <div className="donations-grid">
-        {donations.map((donation, index) => (
-          <div key={index} className="donation-card">
-            <p className="donation-id">Campaign ID: {donation.campaignId}</p>
-            <p className="donation-amount">Amount: {donation.amount} HBAR</p>
-            <Link to={`/campaign-details/${donation.campaignId}`} className="view-campaign-link">
-              View Campaign
-            </Link>
-          </div>
-        ))}
+      
+      <div className="donations-section">
+        <h3 className="section-heading">INR Donations</h3>
+        {renderInrDonations()}
       </div>
-      <ToastContainer />
+
+      <div className="donations-section">
+        <h3 className="section-heading">Crypto Donations (HBAR)</h3>
+        {renderCryptoDonations()}
+      </div>
+
+      {/* <ToastContainer /> */}
     </div>
   );
-}
+};
 
 export default MyDonations;

@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  role          Role      @default(NGO)
+  name          String
+  address       String?
+  phoneNumber   String?
+  description   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  fundRequests  FundRequest[]
+  platformDonations PlatformDonation[]
+}
+
+model FundRequest {
+  id            String    @id @default(uuid())
+  ngoId         String
+  amount        Float
+  status        RequestStatus @default(PENDING)
+  purpose       String
+  description   String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  ngo           User      @relation(fields: [ngoId], references: [id])
+}
+
+model PlatformDonation {
+  id            String    @id @default(uuid())
+  amount        Float
+  razorpayOrderId String
+  razorpayPaymentId String?
+  status        PaymentStatus @default(PENDING)
+  donorId       String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  donor         User?     @relation(fields: [donorId], references: [id])
+}
+
+model PlatformStats {
+  id                    String   @id @default(cuid())
+  totalDonations        Int      @default(0)
+  totalAmount           Float    @default(0)
+  totalNgos            Int      @default(0)
+  totalDonors          Int      @default(0)
+  totalAmountDonatedToNgos Float @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+enum Role {
+  NGO
+  ADMIN
+  DONATOR
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+} 

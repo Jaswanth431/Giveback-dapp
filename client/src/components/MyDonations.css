@@ -1,0 +1,136 @@
+.my-donations-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.my-donations-heading {
+  color: #2d3748;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.donations-section {
+  margin-bottom: 3rem;
+}
+
+.section-heading {
+  color: #4a5568;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.donations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.donation-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  transition: transform 0.2s ease-in-out;
+}
+
+.donation-card:hover {
+  transform: translateY(-5px);
+}
+
+.donation-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.donation-amount {
+  color: #d80032;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.donation-date {
+  color: #4a5568;
+  font-size: 0.875rem;
+}
+
+.donation-status {
+  color: #4a5568;
+  font-size: 0.875rem;
+}
+
+.status-completed {
+  color: #065f46;
+  background-color: #d1fae5;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.status-pending {
+  color: #92400e;
+  background-color: #fef3c7;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.status-failed {
+  color: #991b1b;
+  background-color: #fee2e2;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.spinner {
+  width: 3rem;
+  height: 3rem;
+}
+
+.no-donations {
+  text-align: center;
+  color: #4a5568;
+  font-size: 1.1rem;
+  padding: 2rem;
+  background: #f7fafc;
+  border-radius: 8px;
+}
+
+.view-campaign-link {
+  color: #d80032;
+  text-decoration: none;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.view-campaign-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .my-donations-container {
+    padding: 1rem;
+  }
+
+  .donations-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .donation-card {
+    padding: 1rem;
+  }
+} 

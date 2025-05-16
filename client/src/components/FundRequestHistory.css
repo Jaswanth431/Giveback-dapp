@@ -1,0 +1,138 @@
+.fund-request-history-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.history-heading {
+  color: #2d3748;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.request-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  transition: transform 0.2s ease-in-out;
+  width: 100%;
+}
+
+.request-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.request-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.request-amount {
+  color: #d80032;
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.status-approved {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-rejected {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.request-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.request-purpose,
+.request-description,
+.request-date {
+  color: #4a5568;
+  font-size: 1.1rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.request-purpose strong,
+.request-description strong,
+.request-date strong {
+  color: #2d3748;
+}
+
+.no-requests {
+  text-align: center;
+  color: #4a5568;
+  font-size: 1.25rem;
+  padding: 2rem;
+  background: #f7fafc;
+  border-radius: 8px;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+.spinner {
+  width: 3rem;
+  height: 3rem;
+}
+
+@media (max-width: 768px) {
+  .fund-request-history-container {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .history-heading {
+    font-size: 2rem;
+  }
+
+  .request-card {
+    padding: 1rem;
+  }
+
+  .request-amount {
+    font-size: 1.5rem;
+  }
+
+  .request-purpose,
+  .request-description,
+  .request-date {
+    font-size: 1rem;
+  }
+} 

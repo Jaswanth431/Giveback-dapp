@@ -97,7 +97,7 @@ const CampaignDetails = () => {
 
     return (
         <div>
-            <ToastContainer style={{ fontSize: '18px' }} />
+            {/* <ToastContainer style={{ fontSize: '18px' }} /> */}
             <div className="campaign-details-container">
                 <div className="campaign-image-container">
                     <img src={campaign.image} alt="campaign" className="campaign-image" />

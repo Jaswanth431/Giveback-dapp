@@ -2,19 +2,35 @@ const express = require('express');
 const { ethers } = require('ethers');
 const abi = require('./abi');
 const { BigNumber } = require('ethers');
-const cors = require('cors'); 
+const cors = require('cors');
+const userRoutes = require('./routes/user');
+const fundRequestRoutes = require('./routes/fundRequest');
+const donationRoutes = require('./routes/donation');
+const adminRoutes = require('./routes/admin');
+
 
 const app = express();
 const port = 3000;
 
 const providerUrl = 'https://testnet.hashio.io/api';
 const provider = new ethers.JsonRpcProvider(providerUrl);
-app.use(cors()); // Allow all origins
+
+app.use(cors());
 app.use(express.json());
 
+// Routes
+app.use('/api/users', userRoutes);
+app.use('/api/fund-requests', fundRequestRoutes);
+app.use('/api/donations', donationRoutes);
+app.use('/api/admin', adminRoutes);
 
 
-const contractAddress = '0x643F910Db5EdC319790A8316fb3c08B213351cd8';
+// Existing routes
+// Old address
+// const contractAddress = '0x643F910Db5EdC319790A8316fb3c08B213351cd8';
+// New address
+const contractAddress = '0x4aEf9180D24Bd7a5Cc3f7A339caA677EDf492572';
+
 const contract = new ethers.Contract(contractAddress, abi, provider);
 
 app.get('/campaign/:id', async (req, res) => {
@@ -27,12 +43,12 @@ app.get('/campaign/:id', async (req, res) => {
       owner: campaign.owner,
       title: campaign.title,
       description: campaign.description,
-      target: ethers.formatUnits(campaign.target, 8), 
+      target: ethers.formatUnits(campaign.target, 8),
       deadline: campaign.deadline.toString(),
       amountCollected: ethers.formatUnits(campaign.amountCollected, 8),
       image: campaign.image,
       donators: campaign.donators,
-      donations: campaign.donations.map(donation =>ethers.formatUnits(donation, 8)) 
+      donations: campaign.donations.map(donation => ethers.formatUnits(donation, 8))
     };
 
     res.json(formattedData);
@@ -46,14 +62,14 @@ app.get('/active-campaigns', async (req, res) => {
   try {
     const campaigns = await contract.getCampaigns();
 
-    const currentTimestamp = Math.floor(Date.now() / 1000); 
+    const currentTimestamp = Math.floor(Date.now() / 1000);
 
     let activeCampaigns = campaigns.filter(campaign => campaign.deadline > currentTimestamp);
 
     const sortedActiveCampaigns = [...activeCampaigns].sort((a, b) => parseInt(a.deadline) - parseInt(b.deadline));
 
     const formattedCampaigns = sortedActiveCampaigns.map((campaign, index) => ({
-      cId: campaign.id.toString(), 
+      cId: campaign.id.toString(),
       owner: campaign.owner,
       title: campaign.title,
       description: campaign.description,
@@ -90,8 +106,8 @@ app.post('/mycampaigns', async (req, res) => {
       title: campaign.title,
       description: campaign.description,
       target: ethers.formatUnits(campaign.target, 8),
-      deadline:campaign.deadline.toString(), 
-      amountCollected: ethers.formatUnits(campaign.amountCollected, 8), 
+      deadline: campaign.deadline.toString(),
+      amountCollected: ethers.formatUnits(campaign.amountCollected, 8),
       image: campaign.image,
       totalDonators: campaign.donators.length,
     }));
@@ -110,7 +126,7 @@ app.post('/mycampaigns', async (req, res) => {
 });
 
 app.post('/mydonations', async (req, res) => {
-  const { address } = req.body; 
+  const { address } = req.body;
 
   if (!address) {
     return res.status(400).json({
@@ -124,7 +140,7 @@ app.post('/mydonations', async (req, res) => {
     const [campaignIds, donationAmounts] = result;
     const formattedDonations = donationAmounts.map((amount, index) => ({
       campaignId: campaignIds[index].toString(),
-      amount: ethers.formatUnits(amount, 8), 
+      amount: ethers.formatUnits(amount, 8),
     }));
 
     res.status(200).json({
@@ -139,8 +155,6 @@ app.post('/mydonations', async (req, res) => {
     });
   }
 });
-
-
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

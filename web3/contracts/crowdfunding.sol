@@ -24,6 +24,33 @@ contract CrowdFunding {
     // Event for donations
     event Donated(uint256 campaignId, address donator, uint256 amount);
 
+    // New structs for platform donations and fund requests
+    struct PlatformDonation {
+        uint256 id;
+        string donorId;  // Changed from address to string
+        string donorName;
+        uint256 amount;
+        uint256 timestamp;
+    }
+
+    struct donatedtoNGO {
+        uint256 id;
+        string ngoId;
+        string ngoName;
+        uint256 amount;
+        uint256 timestamp;
+    }
+
+    // New mappings and counters
+    mapping(uint256 => PlatformDonation) public platformDonations;
+    mapping(uint256 => donatedtoNGO) public donatedToNGOs;
+    uint256 public numberOfPlatformDonations = 0;
+    uint256 public numberOfFundRequests = 0;
+
+    // New events
+    event PlatformDonated(uint256 donationId, string donor, string donorName, uint256 amount);
+    event FundRequested(uint256 requestId, string ngo, string ngoName, uint256 amount);
+
     function createCampaign(string memory _title, string memory _description, uint256 _target, uint256 _deadline, string memory _image) public returns (uint256) {
         require(_deadline > block.timestamp, "The deadline should be a date in the future.");
 
@@ -129,5 +156,52 @@ contract CrowdFunding {
         }
 
         return (campaignIds, donations);
+    }
+
+    // New functions for platform donations
+    function donateToPlatform(string memory _donorName, uint256 _amount, string memory _id) public {
+        require(_amount > 0, "Donation amount should be greater than zero.");
+
+        PlatformDonation storage donation = platformDonations[numberOfPlatformDonations];
+        donation.id = numberOfPlatformDonations;
+        donation.donorId = _id;
+        donation.donorName = _donorName;
+        donation.amount = _amount;
+        donation.timestamp = block.timestamp;
+
+        emit PlatformDonated(numberOfPlatformDonations, _id, _donorName, _amount);
+        numberOfPlatformDonations++;
+    }
+
+    // New functions for fund requests
+    function createFundRequest(string memory _ngoId, string memory _ngoName, uint256 _amount) public {
+        require(_amount > 0, "Amount should be greater than zero");
+
+        donatedtoNGO storage request = donatedToNGOs[numberOfFundRequests];
+        request.id = numberOfFundRequests;
+        request.ngoId = _ngoId;
+        request.ngoName = _ngoName;
+        request.amount = _amount;
+        request.timestamp = block.timestamp;
+
+        emit FundRequested(numberOfFundRequests, _ngoId, _ngoName, _amount);
+        numberOfFundRequests++;
+    }
+
+    // New view functions
+    function getPlatformDonations() public view returns (PlatformDonation[] memory) {
+        PlatformDonation[] memory allDonations = new PlatformDonation[](numberOfPlatformDonations);
+        for (uint i = 0; i < numberOfPlatformDonations; i++) {
+            allDonations[i] = platformDonations[i];
+        }
+        return allDonations;
+    }
+
+    function getFundRequests() public view returns (donatedtoNGO[] memory) {
+        donatedtoNGO[] memory allRequests = new donatedtoNGO[](numberOfFundRequests);
+        for (uint i = 0; i < numberOfFundRequests; i++) {
+            allRequests[i] = donatedToNGOs[i];
+        }
+        return allRequests;
     }
 }

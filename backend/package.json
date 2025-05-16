@@ -11,9 +11,18 @@
   "license": "ISC",
   "dependencies": {
     "@hashgraph/sdk": "^2.51.0",
+    "@prisma/client": "^5.10.0",
+    "backend": "file:",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "ethers": "^6.13.2",
     "express": "^4.21.0",
-    "nodemon": "^3.1.6"
+    "jsonwebtoken": "^9.0.2",
+    "nodemon": "^3.1.6",
+    "pg": "^8.11.3",
+    "razorpay": "^2.9.2"
+  },
+  "devDependencies": {
+    "prisma": "^5.10.0"
   }
 }
